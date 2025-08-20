@@ -1,0 +1,27 @@
+actor_model_dir: "/home/user/workspace/models/PRISM-CoT"
+mode: "outcome"
+generate_mode: "vllm"
+worker_num: 3
+server_url: http://0.0.0.0:8000/v1
+worker_prompt_num: 500
+temperature: 0.8
+top_p: 0.9
+top_k: 50
+max_tokens: 2048
+seed: 42
+stop_tokens: ['<|/PROBLEM|>', '<|/CAPTION|>', '<|/REASONING|>', '<|/OUTPUT|>', '<|eot_id|>', '<|end_of_text|>']
+end_tokens: ['<|/OUTPUT|>', '<|eot_id|>', '<|end_of_text|>']
+train_prompt_path: "./prompt_data/benign.json"
+output_path: "./mct_data"
+c: 1.5
+max_depth: 5
+iterations: 200
+generate_samples_number: 3
+visit_all_node: True
+p_average_strategy: "uniform"
+able_to_reselected: True
+score_type: "UCB"
+use_cache: True
+cache_dir: "./cache"
+log_file: "./log/log.txt"
+

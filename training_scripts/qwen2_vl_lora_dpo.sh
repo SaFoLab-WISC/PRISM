@@ -1,0 +1,25 @@
+swift rlhf \
+    --rlhf_type dpo \
+    --model Your PRISM-SFT model here \
+    --model_type qwen2_vl \
+    --train_type full \
+    --dataset /home/nanxi/MLLM_safeguard/STAIR/actor_train_data/DPO.jsonl \
+    --torch_dtype bfloat16 \
+    --num_train_epochs 3 \
+    --per_device_train_batch_size 1 \
+    --per_device_eval_batch_size 1 \
+    --learning_rate 1e-5 \
+    --gradient_accumulation_steps 4 \
+    --eval_steps 200 \
+    --save_steps 100 \
+    --save_total_limit 3 \
+    --logging_steps 5 \
+    --max_length 8192 \
+    --output_dir output \
+    --warmup_ratio 0.05 \
+    --save_only_model true \
+    --dataloader_num_workers 4 \
+    --dataset_num_proc 4 \
+    --deepspeed zero3 \
+    --attn_impl flash_attn \
+    --freeze_vit true 

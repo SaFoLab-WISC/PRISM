@@ -1,0 +1,13 @@
+swift sft \
+    --model /home/user/workspace/Qwen \
+    --model_type qwen2_vl \
+    --train_type full \
+    --dataset "/home/user/workspace/DATASET/PRISM-CoT/swift_data.json" \
+    --num_train_epochs 3 \
+    --per_device_train_batch_size 3 \
+    --learning_rate 1e-5 \
+    --gradient_accumulation_steps 32 \
+    --eval_steps 20 \
+    --save_steps 30 \
+    --save_total_limit 2 \
+    --logging_steps 5

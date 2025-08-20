@@ -1,0 +1,14 @@
+swift sft \
+    --model Your llava model here \
+    --model_type llava1_6_mistral_hf \
+    --train_type full \
+    --dataset "/dev/shm/SafeVL-CoT/SFT_swift.json" \
+    --num_train_epochs 2 \
+    --torch_dtype bfloat16 \
+    --per_device_train_batch_size 2 \
+    --learning_rate 1e-5 \
+    --gradient_accumulation_steps 32 \
+    --eval_steps 20 \
+    --save_steps 30 \
+    --save_total_limit 2 \
+    --logging_steps 5 
