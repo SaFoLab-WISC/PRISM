@@ -92,10 +92,14 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 If you use PRISM in your research, please consider citing our paper:
 
 ```bibtex
-@article{prism2025,
-  title={Robust VLM Alignment with PRISM: Principled Reasoning for Integrated Safety in Multimodality},
-  author={[Authors]},
-  year={2025}
+@misc{li2025prismrobustvlmalignment,
+      title={PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality}, 
+      author={Nanxi Li and Zhengyue Zhao and Chaowei Xiao},
+      year={2025},
+      eprint={2508.18649},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2508.18649}, 
 }
 ```
 
