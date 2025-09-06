@@ -1,1 +1,0 @@
-python src/generate_tree.py --custom_cfg config/qwen_tree_generate.yaml

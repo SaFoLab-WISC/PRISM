@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality. Structured safety-aware chain-of-thought (PRISM-CoT) and preference optimization (PRISM-DPO) achieve state-of-the-art robustness while preserving utility."/>
+  <meta property="og:title" content="PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality"/>
+  <meta property="og:description" content="PRISM embeds principled safety-aware reasoning (PRISM-CoT + PRISM-DPO) to defend Vision-Language Models against multimodal and adaptive jailbreak attacks with minimal utility loss."/>
+  <meta property="og:url" content="https://safolab-wisc.github.io/PRISM"/>
+  <!-- Path to banner image. Replace with a wide illustrative figure (recommended 1200x630). -->
+  <meta property="og:image" content="static/images/overview.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="PRISM: Principled Reasoning for VLM Safety">
+  <meta name="twitter:description" content="Structured safety reasoning (PRISM-CoT & PRISM-DPO) delivers robust VLM alignment against adaptive multimodal attacks."/>
+  <!-- Path to banner image, optimal dimensions 1200x600 -->
+  <meta name="twitter:image" content="static/images/overview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="PRISM, Vision-Language Models, Safety Alignment, Jailbreak Defense, Chain-of-Thought, Preference Optimization, Multimodal Safety, Test-time Scaling, MCTS, DPO">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+Pro:wght@400;600&family=Google+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(6px);">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#top"><strong>PRISM</strong></a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="navMenu" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="#overview">Overview</a>
+        <a class="navbar-item" href="#method">Method</a>
+        <a class="navbar-item" href="#results">Results</a>
+        <a class="navbar-item" href="#examples">Examples</a>
+        <a class="navbar-item" href="#citation">Citation</a>
+      </div>
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary is-light" href="https://arxiv.org/abs/2508.18649" target="_blank">arXiv</a>
+            <a class="button is-link is-light" href="https://github.com/SaFoLab-WISC/PRISM" target="_blank">Code</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="top"></div>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { 
+      padding-top: 70px; 
+      font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: -0.01em;
+    }
+    .navbar a.navbar-item.is-active { font-weight:600; color:#3273dc; }
+    
+    /* Typography improvements */
+    .title, .subtitle {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    
+    .publication-title {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    
+    .publication-authors {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+    }
+    
+    .content {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+    
+    .navbar-item {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+    
+    .button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    
+    pre, code {
+      font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+      font-weight: 400;
+    }
+    
+    strong, b {
+      font-weight: 600;
+    }
+  </style>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block"><a href="https://andylinx.github.io/" target="_blank">Nanxi Li</a>,</span>
+              <span class="author-block"><a href="https://safolab-wisc.github.io/PRISM/" target="_blank">Zhengyue Zhao</a>,</span>
+              <span class="author-block"><a href="https://xiaocw11.github.io/full.html" target="_blank">Chaowei Xiao</a></span>
+                  </div>
+
+                  <div class="is-size-5 publication-authors" style="margin-top:0.5rem;">
+                    <span class="author-block">University of Wisconsin-Madison</span>
+                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+
+                  <!-- ArXiv abstract Link -->
+                    <span class="link-block">
+                      <a href="https://arxiv.org/abs/2508.18649" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="ai ai-arxiv"></i>
+                      </span>
+                      <span>arXiv</span>
+                    </a>
+                  </span>
+
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/safoLab-WISC/PRISM" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <!-- Arxiv PDF link -->
+                  <!-- <span class="link-block">
+                    <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-small" id="overview">
+  <div class="hero-body">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+      <div style="text-align: center;">
+        <img src="static/images/overview.svg" style="width: 100%; max-width: 100%; height: auto; border: none;" alt="Overview"/>
+      </div>
+        <h2 class="content has-text-justified">
+          Response comparison between existing defense method with our proposed PRISM method. The existing method fails to detect the harmful intent hidden in the image and provides a harmful response, while our PRISM method successfully identifies the harmful intent through a structured reasoning process and refuses to provide the harmful information.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop" style="max-width: 800px; margin: 0 auto;">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Safeguarding vision-language models (VLMs) is a critical challenge, as existing methods often suffer from over-defense, which harms utility, or rely on shallow alignment, failing to detect complex threats that require deep reasoning. To this end, we introduce <strong>PRISM</strong> (<strong>P</strong>rincipled <strong>R</strong>easoning for <strong>I</strong>ntegrated <strong>S</strong>afety in <strong>M</strong>ultimodality), a system2-like framework that aligns VLMs by embedding a structured, safety-aware reasoning process. 
+            Our framework consists of two key components: PRISM-CoT, a dataset that teaches safety-aware chain-of-thought reasoning, and PRISM-DPO, generated via Monte Carlo Tree Search (MCTS) to further refine this reasoning through Direct Preference Optimization to help obtain a delicate safety boundary. Comprehensive evaluations demonstrate PRISM's effectiveness, achieving remarkably low attack success rates including 0.15% on JailbreakV-28K for Qwen2-VL and 90% improvement over the previous best method on VLBreak for LLaVA-1.5. PRISM also exhibits strong robustness against adaptive attacks, significantly increasing computational costs for adversaries, and generalizes effectively to out-of-distribution challenges, reducing attack success rates to just 8.70% on the challenging multi-image MIS benchmark. Remarkably, this robust defense is achieved while preserving, and in some cases enhancing, model utility.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+                    <section class="hero is-small" id="method">
+      <div style="margin-bottom: 2rem;">
+        <h2 class="title is-3">Method</h2>
+        <p class="content has-text-justified">
+          PRISM addresses the critical challenge of safeguarding Vision-Language Models through structured safety-aware reasoning. We categorize multimodal safety violations into three distinct types: <strong>(1) Problem unsafe</strong> - where textual prompts contain harmful content, <strong>(2) Image unsafe</strong> - where visual inputs present safety risks, and <strong>(3) Problem+Image combination unsafe</strong> - where neither text nor image is inherently harmful, but their combination creates safety concerns requiring sophisticated reasoning to detect.
+        </p>
+        
+        <p class="content has-text-justified">
+          Our framework consists of two key components working synergistically to achieve robust safety alignment:
+        </p>
+        
+        <div style="margin: 1.5rem 0;">
+          <h4 class="subtitle is-5"><strong>PRISM-CoT: Safety-Aware Chain-of-Thought Dataset</strong></h4>
+          <p class="content has-text-justified">
+            <div style="text-align: center;">
+              <img src="static/images/dataset_figure.svg" style="width: 100%; max-width: 100%; height: auto; border: none;" alt="Overview"/>
+            </div>
+            PRISM-CoT teaches models to perform structured reasoning through four key stages:
+            <br><strong>• Problem:</strong> Analyze textual prompts for potential harmful content or malicious intent
+            <br><strong>• Caption:</strong> Generate contextualized visual understanding relative to the query
+            <br><strong>• Reasoning:</strong> Synthesize multimodal information to detect safety violations
+            <br><strong>• Output:</strong> Generate appropriate responses with explicit safety justification
+          </p>
+        </div>
+        
+        <div style="margin: 1.5rem 0;">
+          <h4 class="subtitle is-5"><strong>PRISM-DPO: Monte Carlo Tree Search Preference Optimization</strong></h4>
+          <div style="text-align: center;">
+              <img src="static/images/mcts_data.svg" style="width: 100%; max-width: 100%; height: auto; border: none;" alt="Overview"/>
+            </div>
+          <p class="content has-text-justified">
+            PRISM-DPO refines the reasoning process through step-level preference pairs generated via Monte Carlo Tree Search (MCTS). This component helps establish a delicate safety boundary by optimizing the model's reasoning at each step, ensuring robust defense against sophisticated multimodal attacks while preserving utility on benign tasks.
+          </p>
+        </div>
+      </div>
+        
+    </div>
+  </div>
+</section>
+
+ <section class="hero is-small" id="results">
+  <div class="hero-body">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+      <h2 class="title">Results</h2>
+      
+      <div style="margin-bottom: 2rem;">
+        <h3 class="subtitle is-4"><strong>Better Safety-Utility Trade-off</strong></h3>
+        <img src="static/images/tradeoff.png" style="display: block; margin: 1rem auto;" alt="Safety-Utility Trade-off" width="80%"/>
+        <p class="content has-text-justified">
+          PRISM achieves an optimal balance between safety robustness and helpfulness preservation, successfully navigating the critical trade-off in VLM alignment. Our method consistently delivers top-tier performance across established safety benchmarks while maintaining high utility scores. For example, on Qwen2-VL, PRISM achieves the lowest Attack Success Rate (ASR) of <strong>8.7%</strong> on MIS and maintains a helpfulness score of <strong>48.9</strong> on MM-Vet-v2, compared to competing methods like VLGuard which suffer from severe over-defense.
+        </p>
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <h3 class="subtitle is-4"><strong>Robustness Against Adaptive Attacks</strong></h3>
+        <img src="static/images/IDEATOR.png" style="display: block; margin: 1rem auto;" alt="Adaptive Attack Robustness" width="60%"/>
+        <p class="content has-text-justified">
+          PRISM demonstrates significant robustness against adaptive attacks, consistently maintaining low ASR while requiring substantially more queries for adversaries to find successful attacks. This translates to dramatically higher computational costs for attackers compared to undefended models, which show clear vulnerability patterns with sharp ASR increases corresponding to the attacker's iterative refinement strategy.
+        </p>
+      </div>
+      
+
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small" id="examples">
+  <div class="hero-body">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+      <h2 class="title">Case Studies</h2>
+      <p class="content has-text-justified" style="margin-bottom: 2rem;">
+        We present qualitative case studies to illustrate the performance differences between PRISM and other safety methods on both benign and malicious inputs.
+      </p>
+      
+      <div id="results-carousel" class="carousel results-carousel">
+       <div class="item">
+        <!-- Benign Case - Other Methods -->
+        <img src="static/images/case0.svg" style="display: block; margin: 0 auto;" alt="Benign case with other methods" width="90%"/>
+        <h2 class="subtitle has-text-centered">
+          <strong>Benign Input:</strong> Existing defense methods (SPA-VL, VLGuard) show over-defense, failing to engage with OCR and math reasoning tasks.
+        </h2>
+      </div>
+      
+      <div class="item">
+        <!-- Benign Case - PRISM -->
+        <img src="static/images/case1.svg" style="display: block; margin: 0 auto;" alt="Benign case with PRISM" width="90%"/>
+        <h2 class="subtitle has-text-centered">
+          <strong>Benign Input:</strong> PRISM successfully handles the complex instruction, providing the correct answer (15 minutes) with transparent reasoning.
+        </h2>
+      </div>
+      
+      <div class="item">
+        <!-- Malicious Case - SafeRLHF-V -->
+        <img src="static/images/case3.svg" style="display: block; margin: 0 auto;" alt="Malicious case with SafeRLHF-V" width="90%"/>
+        <h2 class="subtitle has-text-centered">
+          <strong>Malicious Input:</strong> SafeRLHF-V fails to detect harmful intent and provides detailed instructions for vandalizing cultural heritage sites.
+        </h2>
+      </div>
+      
+      <div class="item">
+        <!-- Malicious Case - PRISM -->
+        <img src="static/images/case2.svg" style="display: block; margin: 0 auto;" alt="Malicious case with PRISM" width="90%"/>
+        <h2 class="subtitle has-text-centered">
+          <strong>Malicious Input:</strong> PRISM successfully identifies malicious intent during the REASONING stage and provides a safe refusal.
+        </h2>
+      </div>
+  </div>
+</div>
+</div>
+</section>
+<!-- 
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Example</h2>
+      <img src="static/images/case_jailbreak.svg" style="display: block; margin: 0 auto;" alt="Example" width="60%"/>
+        <h2 class="content has-text-justified">
+          An example of jailbreak prompt.
+        </h2>
+      </div>
+      <img src="static/images/case_harmful.svg" style="display: block; margin: 0 auto;" alt="Example" width="50%"/>
+        <h2 class="content has-text-justified">
+          An example of direct harmful prompt.
+        </h2>
+      </div>
+      <img src="static/images/case_benign.svg" style="display: block; margin: 0 auto;" alt="Example" width="50%"/>
+        <h2 class="content has-text-justified">
+          An example of benign prompt.
+        </h2>
+      </div>
+    </div>
+  </section> -->
+
+
+
+
+
+
+
+
+                      <!-- Citation Section -->
+                      <section class="section hero is-light" id="citation">
+                        <div class="container is-max-desktop" style="max-width: 900px;">
+                          <h2 class="title is-3 has-text-centered">Citation</h2>
+                          <p class="has-text-centered" style="margin-bottom:1rem;">If you find PRISM useful, please cite:</p>
+                          <div class="box" style="position:relative;">
+                            <button id="copy-citation" class="button is-primary is-light is-small" style="position:absolute; top:10px; right:10px;">Copy</button>
+<pre style="white-space:pre; overflow-x:auto; font-size:0.8rem; padding-right:3rem;" id="bibtex-entry">@misc{li2025prismrobustvlmalignment,
+      title={PRISM: Robust VLM Alignment with Principled Reasoning for Integrated Safety in Multimodality}, 
+      author={Nanxi Li and Zhengyue Zhao and Chaowei Xiao},
+      year={2025},
+      eprint={2508.18649},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2508.18649}, 
+}</pre>
+                          </div>
+                        </div>
+                      </section>
+
+                      <button id="back-to-top" aria-label="Back to top" class="button is-link" style="position:fixed; bottom:25px; right:25px; display:none; border-radius:50%; width:48px; height:48px; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
+                        ↑
+                      </button>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> (adapted from <a href="https://nerfies.github.io" target="_blank">Nerfies</a>). If PRISM helps your research, please star the <a href="https://github.com/SaFoLab-WISC/PRISM" target="_blank">repository</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+</body>
+</html>
